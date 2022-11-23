@@ -1,0 +1,23 @@
+server:
+  port: 8090
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+#        If using MultitenantReactiveAuthenticationManagerResolver this confi can be removed
+        opaquetoken:
+          introspection-uri: http://localhost:8080/realms/tenant01/protocol/openid-connect/token/introspect
+          client-id: clientId
+          client-secret: clientSecret
+  cloud:
+    gateway:
+      routes:
+        - id: service01
+          uri: http://localhost:8091
+          predicates:
+            - Path=/service01/**
+          filters:
+            - StripPrefix=1
+            # ToDo How to ensure all routes have this filter?
+            - RoleAuth=admin GET-POST, support GET
